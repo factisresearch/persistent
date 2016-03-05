@@ -472,8 +472,7 @@ doesTableExist getter (DBName name) = do
     stmt <- getter sql
     with (stmtQuery stmt vals) ($$ start)
   where
-    sql = "SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog'"
-          <> " AND schemaname != 'information_schema' AND tablename=?"
+    sql = "SELECT COUNT(*) FROM pg_catalog.pg_tables WHERE schemaname = current_schema() AND tablename=?"
     vals = [PersistText name]
 
     start = await >>= maybe (error "No results when checking doesTableExist") start'
